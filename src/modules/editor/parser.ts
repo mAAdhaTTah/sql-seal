@@ -38,8 +38,10 @@ export const SQLSealLangDefinition = (views: ViewDefinition[], flags: readonly F
             |                          tableOpening NonemptyListOf<listElement, ","> tableDefinitionClosing      -- mdtable
             TableFileExpressionArgs =  filename ("," NonemptyListOf<listElement, ",">)?
             identifier =               (alnum | "_")+
-            filename  =                ~("\"") (alnum | "." | "-" | space | "_" | "/" | "\\" | "$" | "[" | "]" | "\"")+ ~("\"") -- unquoted
-            |                          "\"" (alnum | "." | "-" | space | "_" | "/" | "\\" | "$" | "[" | "]" | ",")+ "\"" -- quoted
+            filename  =                "\"" (~"\"" any)+ "\"" -- quoted
+            |                          unquotedFilenamePart+ -- unquoted
+            unquotedFilenamePart =     "(" unquotedFilenamePart* ")" -- balanced
+            |                          (alnum | "." | "-" | space | "_" | "/" | "\\" | "$" | "[" | "]") -- plain
             fileOpening =              caseInsensitive<"file(">
             tableOpening =             caseInsensitive<"table(">
             tableDefinitionClosing =   ")"

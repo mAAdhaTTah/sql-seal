@@ -69,6 +69,54 @@ describe('Ohm parser', () => {
         );
     })
 
+    it('should parse table expression with parentheses in name with name quoted', () => {
+        expect(parse('TABLE x = file("abcdef (ghijk) (123).csv")', DEFAULT_VIEWS)).toEqual({
+            query: '',
+            tables: [{
+                arguments: ['abcdef (ghijk) (123).csv'],
+                type: 'file',
+                tableAlias: 'x'
+            }],
+            flags: {},
+            renderer: {
+                name: 'GRID',
+                options: ''
+            }
+        })
+    })
+
+    it('should parse table expression with parentheses in name unquoted', () => {
+        expect(parse('TABLE x = file(abcdef (ghijk) (123).csv)', DEFAULT_VIEWS)).toEqual({
+            query: '',
+            tables: [{
+                arguments: ['abcdef (ghijk) (123).csv'],
+                type: 'file',
+                tableAlias: 'x'
+            }],
+            flags: {},
+            renderer: {
+                name: 'GRID',
+                options: ''
+            }
+        })
+    })
+
+    it('should parse arguments following a quoted name with parentheses', () => {
+        expect(parse('TABLE x = file("abcdef (ghijk).json5", $.results[*])', DEFAULT_VIEWS)).toEqual({
+            query: '',
+            tables: [{
+                arguments: ['abcdef (ghijk).json5', '$.results[*]'],
+                type: 'file',
+                tableAlias: 'x'
+            }],
+            flags: {},
+            renderer: {
+                name: 'GRID',
+                options: ''
+            }
+        })
+    })
+
     it('should parse SELECT statement alone', () => {
         expect(parse('SELECT * FROM files', DEFAULT_VIEWS)).toEqual({
             query: 'SELECT * FROM files',
